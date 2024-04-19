@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TODO APP</title>
+</head>
+<style>
+  body {
+    display: grid;
+    place-content: center;
+    height: 60vh;
+    background-color: black;
+  }
+
+  .input {
+    border: 2px solid transparent;
+    width: 15em;
+    height: 2.5em;
+    padding-left: 0.8em;
+    outline: none;
+    overflow: hidden;
+    background-color: #F3F3F3;
+    border-radius: 10px;
+    transition: all 0.5s;
+  }
+
+  .input:hover,
+  .input:focus {
+    border: 2px solid #4A9DEC;
+    box-shadow: 0px 0px 0px 7px rgb(74, 157, 236, 20%);
+    background-color: white;
+  }
+
+  .cssbuttons-io-button {
+    display: flex;
+    align-items: center;
+    font-family: inherit;
+    font-weight: 500;
+    height: 2.5em;
+    font-size: 16px;
+    padding: 0.7em 1.4em 0.7em 1.1em;
+    color: white;
+    background: #ad5389;
+    background: linear-gradient(0deg, rgb(20, 160, 167) 0%, rgb(19, 201, 201) 100%);
+    border: none;
+    box-shadow: 0 0.7em 1.5em -0.5em #0deeee98;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+  }
+
+  .cssbuttons-io-button svg {
+    margin-right: 6px;
+  }
+
+  .cssbuttons-io-button:hover {
+    box-shadow: 0 0.5em 1.5em -0.5em #14a73e98;
+  }
+
+  .cssbuttons-io-button:active {
+    box-shadow: 0 0.3em 1em -0.5em #14a73e98;
+  }
+
+  h1 {
+    font-size: 32px;
+    text-align: center;
+    color: #4A9DEC;
+
+  }
+
+  .form {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .mainDiv {
+    display: flex;
+    gap: 8rem;
+    max-width: 20rem;
+  }
+
+  .mainDiv li {
+    margin-top: 0.5rem;
+    color: white;
+    font-size: 20px;
+    margin-bottom: 2rem;
+    
+
+
+
+  }
+
+  .to-do-list {
+    margin-top: 1rem;
+    text-align: center;
+
+  }
+
+  .bin-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 37px;
+    height: 37px;
+    border-radius: 5px;
+    background-color: rgb(39, 199, 220);
+    cursor: pointer;
+    border: 2px solid rgb(95, 241, 226);
+    transition-duration: 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bin-bottom {
+    width: 15px;
+    z-index: 2;
+  }
+
+  .bin-top {
+    width: 17px;
+    transform-origin: right;
+    transition-duration: 0.3s;
+    z-index: 2;
+  }
+
+  .bin-button:hover .bin-top {
+    transform: rotate(45deg);
+  }
+
+  .bin-button:hover {
+    background-color: rgb(255, 0, 0);
+  }
+
+  .bin-button:active {
+    transform: scale(0.9);
+  }
+
+  .garbage {
+    position: absolute;
+    width: 14px;
+    height: auto;
+    z-index: 1;
+    opacity: 0;
+    transition: all 0.3s;
+  }
+
+  .bin-button:hover .garbage {
+    animation: throw 0.4s linear;
+  }
+
+  @keyframes throw {
+    from {
+      transform: translate(-400%, -700%);
+      opacity: 0;
+    }
+
+    to {
+      transform: translate(0%, 0%);
+      opacity: 1;
+    }
+  }
+</style>
+
+<body>
+
+  <h1>ToDo List</h1>
+  <form action="" class="form">
+    <input class="input" placeholder="Type Here.....">
+    <button class="cssbuttons-io-button" id="btn">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+        <path fill="none" d="M0 0h24v24H0z"></path>
+        <path fill="currentColor" d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"></path>
+      </svg>
+      <span>Add</span>
+    </button>
+  </form>
+  <section class="to-do-list">
+
+  </section>
+
+  <script>
+    const input = document.querySelector('.input');
+    const btn = document.querySelector('#btn');
+    const toDolist = document.querySelector('.to-do-list');
+    
+    
+    const getElementFromLocal =  () =>{
+      return JSON.parse(localStorage.getItem('TodoList'))
+    }
+
+    let localtoDolist = getElementFromLocal() || [];
+    
+    const updateToDolistLocal = (localtoDolist) =>{
+      localStorage.setItem('TodoList',JSON.stringify(localtoDolist))
+    }
+
+    
+    
+   
+
+    const addTodoDynamically = (element) =>{
+      let div = document.createElement('div');
+      div.classList.add('mainDiv');
+      div.innerHTML = `<li>${element}</li> <button class="bin-button deleteBtn">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 39 7"
+    class="bin-top"
+  >
+    <line stroke-width="4" stroke="white" y2="5" x2="39" y1="5"></line>
+    <line
+      stroke-width="3"
+      stroke="white"
+      y2="1.5"
+      x2="26.0357"
+      y1="1.5"
+      x1="12"
+    ></line>
+  </svg>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 33 39"
+    class="bin-bottom"
+  >
+    <mask fill="white" id="path-1-inside-1_8_19">
+      <path
+        d="M0 0H33V35C33 37.2091 31.2091 39 29 39H4C1.79086 39 0 37.2091 0 35V0Z"
+      ></path>
+    </mask>
+    <path
+      mask="url(#path-1-inside-1_8_19)"
+      fill="white"
+      d="M0 0H33H0ZM37 35C37 39.4183 33.4183 43 29 43H4C-0.418278 43 -4 39.4183 -4 35H4H29H37ZM4 43C-0.418278 43 -4 39.4183 -4 35V0H4V35V43ZM37 0V35C37 39.4183 33.4183 43 29 43V35V0H37Z"
+    ></path>
+    <path stroke-width="4" stroke="white" d="M12 6L12 29"></path>
+    <path stroke-width="4" stroke="white" d="M21 6V29"></path>
+  </svg>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 89 80"
+    class="garbage"
+  >
+    <path
+      fill="white"
+      d="M20.5 10.5L37.5 15.5L42.5 11.5L51.5 12.5L68.75 0L72 11.5L79.5 12.5H88.5L87 22L68.75 31.5L75.5066 25L86 26L87 35.5L77.5 48L70.5 49.5L80 50L77.5 71.5L63.5 58.5L53.5 68.5L65.5 70.5L45.5 73L35.5 79.5L28 67L16 63L12 51.5L0 48L16 25L22.5 17L20.5 10.5Z"
+    ></path>
+  </svg>
+</button>
+`
+      toDolist.append(div);
+
+    }
+     
+    const addTodo = (e) => {
+      e.preventDefault();
+      
+      let toDoValue = input.value.trim();
+      input.value = ""
+      
+      if(toDoValue !== "" && !localtoDolist.includes(toDoValue)){
+      localtoDolist.push(toDoValue)
+      localtoDolist = [...new Set(localtoDolist)];
+      localStorage.setItem('TodoList', JSON.stringify(localtoDolist) )
+      addTodoDynamically(toDoValue);
+      }
+    }
+
+      const showToDolist = () =>{
+     
+      localtoDolist.forEach(element => {
+         addTodoDynamically(element)
+      });
+    }
+
+    showToDolist()
+
+     btn.addEventListener('click', (e) => {
+      addTodo(e);
+    })
+    const removeTodo = (e) =>{
+      let todoDelete = e.target;
+      let toDelete = todoDelete.previousElementSibling;
+      console.log(toDelete);
+      let parentElem = todoDelete.parentElement;
+    
+      localtoDolist = localtoDolist.filter((currElem)=>{
+             
+              return currElem.toLowerCase() !== toDelete.innerText.toLowerCase();
+      })
+      parentElem.remove();
+      updateToDolistLocal(localtoDolist)
+    
+      console.log(localtoDolist);
+
+
+    }
+
+    toDolist.addEventListener('click',(e)=>{
+    
+        removeTodo(e)
+
+      
+    })
+   
+   
+
+  </script>
+</body>
+
+</html>
